@@ -78,13 +78,14 @@ public class PersonsControllerServiceTests {
 		final PersonsCriteria personCriteria = PersonsCriteria.builder().lastname(findLastName).build();
 		
 		// WHEN
-		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/persons/searches")
+		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/tdd-examples/persons/searches")
 				.content(objectMapper.writeValueAsBytes(personCriteria))
-				.accept(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
 		
 		// THEN
-		assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expectedPersons));
+		List<PersonEntity> responsePersons = Arrays.asList(objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PersonEntity[].class));
+		assertThat(responsePersons).isEqualTo(expectedPersons);
 	}
 }
