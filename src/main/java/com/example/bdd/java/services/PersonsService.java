@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -22,10 +23,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PersonsService {
 	
+	private static final ExampleMatcher findPersonsByCriteriaExample = ExampleMatcher.matchingAll()
+			.withMatcher("firstname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+			.withMatcher("lastname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
 	private final PersonRepository personRepository;
 	
 	private final ObjectMapper objectMapper;
-
+	
 	public Person findPerson(String personId) {
 		Optional<PersonEntity> foundPerson = personRepository.findById(personId);
 		if (!foundPerson.isPresent()) {	// NOTE: JDK8 Optional does not have "isEmpty()"
@@ -48,11 +53,12 @@ public class PersonsService {
 			entityCriteria.lastname(personsCriteria.getLastname());
 		}
 		
-		if (StringUtils.hasText(personsCriteria.getId())) {		
-			entityCriteria.id(personsCriteria.getId());
-		}
+		// TODO - this doesn't fit nicely into the JPA Example. Find another solution.
+		//if (StringUtils.hasText(personsCriteria.getId())) {		
+		//	entityCriteria.id(personsCriteria.getId());
+		//}
 		
-		List<PersonEntity> foundPersons = personRepository.findAll(Example.of(entityCriteria.build()));
+		List<PersonEntity> foundPersons = personRepository.findAll(Example.of(entityCriteria.build(), findPersonsByCriteriaExample));
 		return (CollectionUtils.isEmpty(foundPersons))
 				? null
 				: Arrays.asList(objectMapper.convertValue(foundPersons, Person[].class)); 
