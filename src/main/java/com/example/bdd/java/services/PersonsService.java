@@ -21,7 +21,7 @@ public class PersonsService {
 
 	public Person findPerson(String personId) {
 		Optional<PersonEntity> foundPerson = personRepository.findById(personId);
-		if (foundPerson.isEmpty()) {
+		if (!foundPerson.isPresent()) {	// NOTE: JDK8 Optional does not have "isEmpty()"
 			return null;
 		}
 		return objectMapper.convertValue(foundPerson.get(), Person.class);
