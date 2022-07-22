@@ -1,5 +1,22 @@
 # Getting Started
 
+The following branches exist:
+
+* [AC-1.1-bdd-person-endpoints](/../AC-1.1-bdd-person-endpoints/README.md)
+    * Contains the Acceptance Criteria and BDD Requirements in the README file.
+    * Simple example of RED and GREEN commit for endpoint to get single person record.
+    
+    
+* [AC-1.2-bdd-messy](/../AC-1.2-bdd-messy/README.md)
+    * Implementation of person "fuzzy search".
+    * Example of iterative RED / GREEN commits while finding issues with the "fuzzy search".
+    
+    
+* [AC-1.2-bdd-messy-cleaned-up](/../AC-1.2-bdd-messy-cleaned-up/README.md)
+    * Results of using "git rebase" and "git stash" to rewrite the history to one RED and one GREEN commit.
+    * End result is exact same code as the final commit of "AC-1.2-bdd-messy".
+
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
