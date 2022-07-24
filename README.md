@@ -2,9 +2,13 @@
 
 ## IMPORTANT: use "--recurse-submodules" when cloning
 
-This project relies on using the `--recurse-submodules` switch when cloning the repo in order to retrieve the OpenAPI spec used in these examples.
+This project relies on on submodules and needs the `--recurse-submodules` switch when cloning the repo in order to retrieve the OpenAPI spec used in these examples.
 
 	git clone --recurse-submodules https://github.com/Tubas118/bdd-java.2022-07.git
+
+If a change occurs to the submodule project, run the following:
+
+	git submodule update
 
 In a real life project, there would be something like Nexus or JFrog to sync up with the OpenAPI spec, but that is not within the scope of these examples.
 
