@@ -1,1 +1,0 @@
-INSERT INTO person (id, firstname, lastname) VALUES ('mock-jdoe-1', 'Jane', 'Doe');
