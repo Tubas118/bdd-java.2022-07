@@ -21,8 +21,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <openapi-generator.version>5.1.1</openapi-generator.version>
-        <openapi-spec.location>bdd-spec.2022-07/bdd-spec.yml</openapi-spec.location>
+        <openapi-spec.location>${project.build.directory}/bdd-spec.yml</openapi-spec.location>
 
+        <bdd-openspec.version>0.0.1-SNAPSHOT</bdd-openspec.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <springfox.version>3.0.0</springfox.version>
     </properties>
@@ -73,6 +74,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.example.bdd</groupId>
+            <artifactId>bdd-openspec</artifactId>
+            <version>${bdd-openspec.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>${jackson-databind-nullable.version}</version>
@@ -92,6 +99,32 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.example.bdd</groupId>
+                                    <artifactId>bdd-openspec</artifactId>
+                                    <version>${bdd-openspec.version}</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <includes>**/*.yml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.openapitools</groupId>
@@ -115,13 +148,14 @@
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <modelPackage>com.example.bdd.java.models</modelPackage>
                             <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            <!-- <templateDirectory></templateDirectory> -->
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <sourceFolder>src/gen/java</sourceFolder>
-                                <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
-                                <serializableModel>false</serializableModel>
+                                <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
+                                <additionalModelTypeAnnotations>@lombok.Builder @lombok.Data @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
+                                <!-- <additionalModelTypeAnnotations>@lombok.Builder @lombok.Data @lombok.NoArgsConstructor @lombok.RequiredArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations> -->
+                                <serializableModel>true</serializableModel>
                                 <useTags>true</useTags>
                             </configOptions>
                         </configuration>
