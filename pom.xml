@@ -23,6 +23,7 @@
         <openapi-generator-template.version>7.22.0</openapi-generator-template.version>
         <openapi-generator-template-dir>${project.basedir}/openapi-templates/${openapi-generator-template.version}</openapi-generator-template-dir>
         <openapi-spec.location>${project.build.directory}/bdd-spec.yml</openapi-spec.location>
+        <spring-boot-maven-plugin.version>4.0.6</spring-boot-maven-plugin.version>
 
         <bdd-openspec.version>0.0.1-SNAPSHOT</bdd-openspec.version>
         <jackson-databind-nullable.version>0.2.10</jackson-databind-nullable.version>
@@ -121,6 +122,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
                         <exclude>
