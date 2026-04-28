@@ -19,6 +19,8 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <commons-collections4.version>4.5.0</commons-collections4.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
         <openapi-generator.version>7.22.0</openapi-generator.version>
         <openapi-generator-template.version>7.22.0</openapi-generator-template.version>
         <openapi-generator-template-dir>${project.basedir}/openapi-templates/${openapi-generator-template.version}</openapi-generator-template-dir>
@@ -47,6 +49,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
