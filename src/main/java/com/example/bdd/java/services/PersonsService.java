@@ -40,28 +40,7 @@ public class PersonsService {
 	}
 	
 	public List<Person> findPersonsByCriteria(PersonsCriteria personsCriteria) {
-		if (personsCriteria == null) {
-			return null;
-		}
-		final PersonEntityBuilder entityCriteria = PersonEntity.builder();
-		
-		if (StringUtils.hasText(personsCriteria.getFirstname())) {		
-			entityCriteria.firstname(personsCriteria.getFirstname());
-		}
-		
-		if (StringUtils.hasText(personsCriteria.getLastname())) {		
-			entityCriteria.lastname(personsCriteria.getLastname());
-		}
-		
-		// TODO - this doesn't fit nicely into the JPA Example. Find another solution.
-		//if (StringUtils.hasText(personsCriteria.getId())) {		
-		//	entityCriteria.id(personsCriteria.getId());
-		//}
-		
-		List<PersonEntity> foundPersons = personRepository.findAll(Example.of(entityCriteria.build(), findPersonsByCriteriaExample));
-		return (CollectionUtils.isEmpty(foundPersons))
-				? null
-				: Arrays.asList(objectMapper.convertValue(foundPersons, Person[].class)); 
+		return null;
 	}
 	
 }

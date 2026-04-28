@@ -1,42 +1,34 @@
 package com.example.bdd.java.controllers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
-
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
+import com.example.bdd.java.entities.PersonEntity;
+import com.example.bdd.java.models.Person;
+import com.example.bdd.java.models.PersonsCriteria;
+import com.example.bdd.java.repositories.PersonRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.bdd.java.entities.PersonEntity;
-import com.example.bdd.java.models.Person;
-import com.example.bdd.java.models.PersonsCriteria;
-import com.example.bdd.java.repositories.PersonRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.example.bdd.java.utils.MappersForTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -76,15 +68,39 @@ public class PersonsControllerServiceTests {
 		assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo(objectMapper.writeValueAsString(expectedPerson));
 	}
 	
-	@DisplayName("AC-1.2: should get list of person records by lastname criteria")
+	@DisplayName("AC-1.2: should get list of person records by criteria")
 	@ParameterizedTest
-	@MethodSource("personCriteriaArguments")
-	public void testGetPersonListByLastNameCriteria(Example<PersonEntity> criteria, PersonsCriteria personsCriteria) throws Exception {
+	@CsvSource({
+			"null,null,Doe,2",
+			"mock,null,null,3",
+			"null,j,Doe,2",
+			"mock-cken-1,null,null,1",
+			"null,jo,Doe,1",
+	})
+	public void testGetPersonListByCriteria(String findId, String findFirstname, String findLastname, int expectedRows) throws Exception {
 		// GIVEN
-		final List<PersonEntity> expectedPersons = personRepository.findAll(criteria);
+		ExampleMatcher matcher = ExampleMatcher.matching()
+				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+				.withIgnoreCase();
+		PersonEntity personEntityMatch = PersonEntity.builder()
+				.id(preprocessValue(findId))
+				.firstname(preprocessValue(findFirstname))
+				.lastname(preprocessValue(findLastname))
+				.build();
+		Example<PersonEntity> personEntityCriteria = Example.of(personEntityMatch, matcher);
+
+		// -- sanity check
+		final List<PersonEntity> expectedPersons = personRepository.findAll(personEntityCriteria);
 		assertThat(expectedPersons).isNotEmpty();
-		assertThat(expectedPersons.size()).isGreaterThanOrEqualTo(2);
-		
+		assertThat(expectedPersons.size()).isGreaterThanOrEqualTo(expectedRows);
+
+		// -- and
+		PersonsCriteria personsCriteria = PersonsCriteria.builder()
+				.id(preprocessValue(findId))
+				.firstname(preprocessValue(findFirstname))
+				.lastname(preprocessValue(findLastname))
+				.build();
+
 		// WHEN
 		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/tdd-examples/persons/searches")
 				.content(objectMapper.writeValueAsBytes(personsCriteria))
@@ -97,29 +113,10 @@ public class PersonsControllerServiceTests {
 		assertThat(responsePersons).isEqualTo(expectedPersons);
 	}
 
-	private static final ExampleMatcher criteriaExampleMatcher = ExampleMatcher.matchingAll()
-			.withMatcher("firstname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
-			.withMatcher("lastname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-
-	private static Stream<Arguments> personCriteriaArguments() {
-
-		return Stream.of(
-				arguments(
-						Example.of(PersonEntity.builder().lastname("Doe").build(), criteriaExampleMatcher),
-						PersonsCriteria.builder().lastname("Doe").build()
-						),
-				arguments(
-						Example.of(PersonEntity.builder().lastname("doe").build(), criteriaExampleMatcher),
-						PersonsCriteria.builder().lastname("doe").build()
-						),
-				arguments(
-						Example.of(PersonEntity.builder().lastname("do").build(), criteriaExampleMatcher),
-						PersonsCriteria.builder().lastname("do").build()
-						),
-				arguments(
-						Example.of(PersonEntity.builder().lastname("e").build(), criteriaExampleMatcher),
-						PersonsCriteria.builder().lastname("e").build()
-						)
-				);
+	private static String preprocessValue(String value) {
+		return StringUtils.isEmpty(value) || "null".equalsIgnoreCase(value)
+				? null
+				: value;
 	}
+
 }
