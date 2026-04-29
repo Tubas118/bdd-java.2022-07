@@ -2,6 +2,7 @@ package com.example.bdd.java.controllers;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +29,19 @@ public class PersonsControllerService implements PersonsApiDelegate {
 	}
 
 	@Override
+	public ResponseEntity<List<Person>> fuzzySearchPersons(String wordSegment) {
+		List<Person> persons = personsService.findPersonByFuzzySearch(wordSegment);
+		return (CollectionUtils.isNotEmpty(persons))
+				? ResponseEntity.ok(persons)
+				: ResponseEntity.notFound().build();
+	}
+
+	@Override
 	public ResponseEntity<List<Person>> searchPersons(PersonsCriteria personsCriteria) {
 		List<Person> persons = personsService.findPersonsByCriteria(personsCriteria);
-		if (persons == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(persons);
+		return (CollectionUtils.isNotEmpty(persons))
+				? ResponseEntity.ok(persons)
+				: ResponseEntity.notFound().build();
 	}
 
 }
