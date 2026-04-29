@@ -1,7 +1,10 @@
 package com.example.bdd.java.services;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import com.example.bdd.java.models.PersonsCriteria;
 import org.springframework.stereotype.Service;
 
 import com.example.bdd.java.entities.PersonEntity;
@@ -26,5 +29,13 @@ public class PersonsService {
 		}
 		return objectMapper.convertValue(foundPerson.get(), Person.class);
 	}
-	
+
+	public List<Person> findPersonsByCriteria(PersonsCriteria personsCriteria) {
+		return Collections.emptyList();
+	}
+
+	public List<Person> findPersonByFuzzySearch(String wordSegment) {
+		return Collections.emptyList();
+	}
+
 }
