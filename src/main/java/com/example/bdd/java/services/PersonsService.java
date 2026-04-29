@@ -1,6 +1,7 @@
 package com.example.bdd.java.services;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class PersonsService {
 		
 		List<PersonEntity> foundPersons = personRepository.findAll(Example.of(entityCriteria.build(), findPersonsByCriteriaExample));
 		return (CollectionUtils.isEmpty(foundPersons))
-				? null
+				? Collections.emptyList()
 				: Arrays.asList(objectMapper.convertValue(foundPersons, Person[].class)); 
 	}
 
