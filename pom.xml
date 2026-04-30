@@ -26,6 +26,7 @@
         <bdd-openspec.version>0.0.1-SNAPSHOT</bdd-openspec.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <springfox.version>3.0.0</springfox.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -104,6 +105,21 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+                <configuration>
+                    <ruleSet>
+                        <ignoreVersions>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>.+-(alpha|beta|RC|M).*</version>
+                            </ignoreVersion>
+                        </ignoreVersions>
+                    </ruleSet>
                 </configuration>
             </plugin>
             <plugin>

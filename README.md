@@ -31,6 +31,8 @@ The following branches exist:
     * End result is exact same code as the final commit of "AC-1.2-bdd-messy".
 
 
+`mvn versions:display-property-updates -Dmaven.version.ignore=".*-alpha.*,.*-beta.*,.*-RC.*,.*-M.*"`
+
 ### Reference Documentation
 For further reference, please consider the following sections:
 
