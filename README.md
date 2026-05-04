@@ -1,40 +1,32 @@
 # Getting Started
 
-## IMPORTANT: use "--recurse-submodules" when cloning
-
-This project relies on on submodules and needs the `--recurse-submodules` switch when cloning the repo in order to retrieve the OpenAPI spec used in these examples.
-
-	git clone --recurse-submodules https://github.com/Tubas118/bdd-java.2022-07.git
-
-If a change occurs to the submodule project, run the following:
-
-	git submodule update
-
-In a real life project, there would be something like Nexus or JFrog to sync up with the OpenAPI spec, but that is not within the scope of these examples.
-
 ## Example branches
 
 The following branches exist:
 
-* [AC-1.1-bdd-person-endpoints](/../AC-1.1-bdd-person-endpoints/README.md)
-    * Contains the Acceptance Criteria and BDD Requirements in the README file.
-    * Simple example of RED and GREEN commit for endpoint to get single person record.
+* Contains the Acceptance Criteria and BDD Requirements in the README file.
+  * Simple example of RED and GREEN commit for endpoint to get single person record.
+  * Java 8: [AC-1.1-bdd-person-endpoints.bdd-spec-lib](/../AC-1.1-bdd-person-endpoints.bdd-spec-lib/README.md)
+  * Java 17: [java17.AC-1.1-bdd-person-endpoints.bdd-spec-lib](/../java17.AC-1.1-bdd-person-endpoints.bdd-spec-lib/README.md)
 
 
-* [AC-1.2-bdd-messy](/../AC-1.2-bdd-messy/README.md)
-    * Implementation of person "fuzzy search".
-    * Example of iterative RED / GREEN commits while finding issues with the "fuzzy search".
+* Implementation of person "fuzzy search".
+  * Example of iterative RED / GREEN commits while finding issues with the "fuzzy search".
+  * Java 8: * [AC-1.2a-bdd-messy.bdd-spec-lib](/../AC-1.2a-bdd-messy.bdd-spec-lib/README.md)
+  * Java 17: * [java17.AC-1.2a-bdd-messy.bdd-spec-lib](/../java17.AC-1.2a-bdd-messy.bdd-spec-lib/README.md)
 
 
-* [AC-1.2-bdd-messy-cleaned-up](/../AC-1.2-bdd-messy-cleaned-up/README.md)
-    * Results of using "git rebase" and "git stash" to rewrite the history to one RED and one GREEN commit.
-    * End result is exact same code as the final commit of "AC-1.2-bdd-messy".
+* Results of using "git rebase" and "git stash" to rewrite the history to one RED and one GREEN commit.
+  * End result is exact same code as the final commit of "AC-1.2-bdd-messy".
+  * Java 8: [AC-1.2-bdd-messy-cleaned-up.bdd-spec-lib](/../AC-1.2-bdd-messy-cleaned-up.bdd-spec-lib/README.md)
+  * Java 17: [java17.AC-1.2-bdd-messy-cleaned-up.bdd-spec-lib](/../java17.AC-1.2-bdd-messy-cleaned-up.bdd-spec-lib/README.md)
 
 
-`mvn versions:update-parent -DparentVersion="[2.7.0,2.99.99)"`
+### Maven commands to check for updates
+`mvn versions:update-parent`
 `mvn versions:display-dependency-updates versions:display-property-updates`
 `mvn versions:display-dependency-updates -DprocessDependencyManagementTransitive=false`
-`mvn versions:display-property-updates -Dmaven.version.ignore=".*-alpha.*,.*-beta.*,.*-RC.*,.*-M.*"`
+`mvn versions:display-property-updates`
 
 ### Reference Documentation
 For further reference, please consider the following sections:
