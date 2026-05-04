@@ -31,6 +31,9 @@ The following branches exist:
     * End result is exact same code as the final commit of "AC-1.2-bdd-messy".
 
 
+`mvn versions:update-parent -DparentVersion="[2.7.0,2.99.99)"`
+`mvn versions:display-dependency-updates versions:display-property-updates`
+`mvn versions:display-dependency-updates -DprocessDependencyManagementTransitive=false`
 `mvn versions:display-property-updates -Dmaven.version.ignore=".*-alpha.*,.*-beta.*,.*-RC.*,.*-M.*"`
 
 ### Reference Documentation

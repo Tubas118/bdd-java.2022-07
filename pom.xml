@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.1</version>
+        <version>3.5.14</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -16,16 +16,18 @@
     <description>Examples of Behavioral Driven Development in Java 8</description>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <openapi-generator.version>5.1.1</openapi-generator.version>
+        <openapi-generator.version>7.22.0</openapi-generator.version>
+        <openapi-generator-template.version>7.22.0</openapi-generator-template.version>
+        <openapi-generator-template-dir>${project.basedir}/openapi-templates/${openapi-generator-template.version}</openapi-generator-template-dir>
         <openapi-spec.location>${project.build.directory}/bdd-spec.yml</openapi-spec.location>
 
         <bdd-openspec.version>0.0.1-SNAPSHOT</bdd-openspec.version>
-        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <jackson-databind-nullable.version>0.2.10</jackson-databind-nullable.version>
         <springfox.version>3.0.0</springfox.version>
+        <swagger-annotations.version>2.2.49</swagger-annotations.version>
         <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
     </properties>
 
@@ -47,6 +49,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
@@ -59,6 +66,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -119,6 +133,23 @@
                                 <version>.+-(alpha|beta|RC|M).*</version>
                             </ignoreVersion>
                         </ignoreVersions>
+                        <rules>
+                            <rule>
+                                <groupId>org.springframework.boot</groupId>
+                                <ignoreVersion>
+                                    <type>range</type>
+                                    <version>[4.0.0,)</version>
+                                </ignoreVersion>
+                            </rule>
+                            <rule>
+                                <groupId>commons-io</groupId>
+                                <artifactId>commons-io</artifactId>
+                                <ignoreVersion>
+                                    <type>exact</type>
+                                    <version>20030203.000550</version>
+                                </ignoreVersion>
+                            </rule>
+                        </rules>
                     </ruleSet>
                 </configuration>
             </plugin>
@@ -170,15 +201,27 @@
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <modelPackage>com.example.bdd.java.models</modelPackage>
                             <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            <templateDirectory>${openapi-generator-template-dir}</templateDirectory>
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <sourceFolder>src/gen/java</sourceFolder>
-                                <generatedConstructorWithRequiredArgs>true</generatedConstructorWithRequiredArgs>
-                                <additionalModelTypeAnnotations>@lombok.Builder @lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
-                                <!-- <additionalModelTypeAnnotations>@lombok.Builder @lombok.Data @lombok.NoArgsConstructor @lombok.RequiredArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations> -->
+                                <useLombokAnnotations>true</useLombokAnnotations>
+                                <lombokUseConstructorProperties>true</lombokUseConstructorProperties>
+                                <generateConstructorWithNoArg>false</generateConstructorWithNoArg>
+                                <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
+                                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder
+                                    @lombok.Data
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
                                 <serializableModel>true</serializableModel>
                                 <useTags>true</useTags>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
                         </configuration>
                     </execution>
