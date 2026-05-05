@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.1</version>
+        <version>3.5.14</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -16,15 +16,19 @@
     <description>Examples of Behavioral Driven Development in Java 8</description>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <openapi-generator.version>5.1.1</openapi-generator.version>
-        <openapi-spec.location>bdd-spec.2022-07/bdd-spec.yml</openapi-spec.location>
+        <openapi-generator.version>7.22.0</openapi-generator.version>
+        <openapi-generator-template.version>7.22.0</openapi-generator-template.version>
+        <openapi-generator-template-dir>${project.basedir}/openapi-templates/${openapi-generator-template.version}</openapi-generator-template-dir>
+        <openapi-spec.location>${project.build.directory}/bdd-spec.yml</openapi-spec.location>
 
-        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <bdd-openspec.version>0.0.1-SNAPSHOT</bdd-openspec.version>
+        <jackson-databind-nullable.version>0.2.10</jackson-databind-nullable.version>
         <springfox.version>3.0.0</springfox.version>
+        <swagger-annotations.version>2.2.49</swagger-annotations.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -32,10 +36,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <dependency>
@@ -51,6 +66,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -70,6 +92,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.example.bdd</groupId>
+            <artifactId>bdd-openspec</artifactId>
+            <version>${bdd-openspec.version}</version>
         </dependency>
 
         <dependency>
@@ -94,6 +122,64 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+                <configuration>
+                    <ruleSet>
+                        <ignoreVersions>
+                            <ignoreVersion>
+                                <type>regex</type>
+                                <version>.+-(alpha|beta|RC|M).*</version>
+                            </ignoreVersion>
+                        </ignoreVersions>
+                        <rules>
+                            <rule>
+                                <groupId>org.springframework.boot</groupId>
+                                <ignoreVersion>
+                                    <type>range</type>
+                                    <version>[4.0.0,)</version>
+                                </ignoreVersion>
+                            </rule>
+                            <rule>
+                                <groupId>commons-io</groupId>
+                                <artifactId>commons-io</artifactId>
+                                <ignoreVersion>
+                                    <type>exact</type>
+                                    <version>20030203.000550</version>
+                                </ignoreVersion>
+                            </rule>
+                        </rules>
+                    </ruleSet>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.example.bdd</groupId>
+                                    <artifactId>bdd-openspec</artifactId>
+                                    <version>${bdd-openspec.version}</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <includes>**/*.yml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>${openapi-generator.version}</version>
@@ -115,14 +201,27 @@
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <modelPackage>com.example.bdd.java.models</modelPackage>
                             <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            <!-- <templateDirectory></templateDirectory> -->
+                            <templateDirectory>${openapi-generator-template-dir}</templateDirectory>
                             <configOptions>
                                 <dateLibrary>java8</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <sourceFolder>src/gen/java</sourceFolder>
-                                <additionalModelTypeAnnotations>@lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor</additionalModelTypeAnnotations>
-                                <serializableModel>false</serializableModel>
+                                <useLombokAnnotations>true</useLombokAnnotations>
+                                <lombokUseConstructorProperties>true</lombokUseConstructorProperties>
+                                <generateConstructorWithNoArg>false</generateConstructorWithNoArg>
+                                <generateConstructorWithRequiredArgs>false</generateConstructorWithRequiredArgs>
+                                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder
+                                    @lombok.Data
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
+                                <serializableModel>true</serializableModel>
                                 <useTags>true</useTags>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
                         </configuration>
                     </execution>

@@ -1,1 +1,11 @@
 
+
+management:
+   endpoints:
+      web:
+         exposure:
+            include: health
+
+logging:
+   level:
+      web: DEBUG
